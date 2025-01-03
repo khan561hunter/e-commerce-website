@@ -13,7 +13,7 @@ export default async function Products() {
     <div className="p-12">
       {/* Grid container */}
       <div className="grid gap-5 md:grid-cols-3">
-        {data.map((val: any, i: any) => {
+        {data.map((val: unknown, i: any) => {
             return(
                 
                 <div
