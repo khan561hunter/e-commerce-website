@@ -1,44 +1,31 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { add } from "../redux/cartslice";
-
-interface Products{
-  id:number;
-  title:string;
-  price:number;
-  image:string;
-}
+import React from "react";
 
 
-const Products : React.FC = () => {
 
-  const [products , SetProducts] = useState<Products[]>([])
-  const dispatch = useDispatch();
-  const getProducts = async ( ) => {
-    const url = await fetch("https://fakestoreapi.com/products");
-    const data : Products[] = await url.json();
+
+
+export default async function Products () {
+
+ 
   
-    SetProducts(data);
+    const url = await fetch("https://fakestoreapi.com/products");
+    const data= await url.json();
+  
+    console.log(data)
 
-  }
+  
 
-  const handleAdd = (product:Products) => {
-    dispatch(add(product))
-  }
-
-  useEffect(()=>{
-    getProducts();
-  })
+  
  
 
   return (
     <div className="p-12">
       {/* Grid container */}
       <div className="grid gap-5 md:grid-cols-3">
-        {products.map((product) => {
+        {data.map((product : any) => {
             return(
                 
                 <div
@@ -113,4 +100,4 @@ const Products : React.FC = () => {
     </div>
   );
 }
-export default Products;
+
