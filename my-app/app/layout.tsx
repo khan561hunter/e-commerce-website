@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
+import ReduxProvider from "./components/reduxProvider";
 // import { CartProvider } from "./Cart/CartContext/CartContext";
 
 const geistSans = localFont({
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        
+        <ReduxProvider>
         <Header />
         {children}
+        </ReduxProvider>
+        
         
         
       </body>

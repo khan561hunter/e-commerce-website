@@ -1,8 +1,15 @@
+"use client";
 import { CgProfile } from "react-icons/cg";
 import { LuShoppingCart } from "react-icons/lu";
 import Link from "next/link";
+import { RootState } from "../redux/store";
+import React from "react";
+import { useSelector } from "react-redux";
 
-const Header = () =>{
+const Header : React.FC = () =>{
+
+    const item = useSelector((state:RootState) => state.cart)
+
     return(
         <main>
             <div className="h-[80px] bg-[#C7D3D4FF] border-b border-[#603F83FF] md:w-full ">
@@ -20,6 +27,7 @@ const Header = () =>{
                     <div className="flex gap-5 ">
                         <CgProfile  className="w-[24px] h-[30px] "/>
                         <Link href={"/Cart"}><LuShoppingCart className="w-[24px] h-[30px] " /></Link>
+                        {item.length}
 
                     </div>
 

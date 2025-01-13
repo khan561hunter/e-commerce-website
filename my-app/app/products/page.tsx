@@ -1,30 +1,55 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-// import { useCart } from "../Cart/CartContext/CartContext";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { add } from "../redux/cartslice";
 
-export default async function Products() {
-  const url = await fetch("https://fakestoreapi.com/products");
-  const data = await url.json();
-//   const { addToCart } = useCart();
-  console.log(data);
+interface Products{
+  id:number;
+  title:string;
+  price:number;
+  image:string;
+}
+
+
+const Products : React.FC = () => {
+
+  const [products , SetProducts] = useState<Products[]>([])
+  const dispatch = useDispatch();
+  const getProducts = async ( ) => {
+    const url = await fetch("https://fakestoreapi.com/products");
+    const data : Products[] = await url.json();
+  
+    SetProducts(data);
+
+  }
+
+  const handleAdd = (product:Products) => {
+    dispatch(add(product))
+  }
+
+  useEffect(()=>{
+    getProducts();
+  })
+ 
 
   return (
     <div className="p-12">
       {/* Grid container */}
       <div className="grid gap-5 md:grid-cols-3">
-        {data.map((val: any, i: any) => {
+        {products.map((product) => {
             return(
                 
                 <div
-                key={i}
+                key={product.id}
                 className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                 >
-                    <Link href={`/products/${val.id}`}  aria-label={`View details for ${val.title}`}>
+                    <Link href={`/products/${product.id}`}  aria-label={`View details for ${product.title}`}>
                         <div>
                         <Image
                             className="p-8 rounded-t-lg w-[300px] h-[300px] mx-auto"
-                            src={val.image}
+                            src={product.image}
                             alt="product image"
                             height={200}
                             width={200}
@@ -33,7 +58,7 @@ export default async function Products() {
                         <div className="px-5 pb-5">
                         <div>
                             <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                            {val.title}
+                            {product.title}
                             </h5>
                         </div>
                         <div className="flex items-center mt-2.5 mb-5">
@@ -56,7 +81,7 @@ export default async function Products() {
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                            ${val.price}
+                            ${product.price}
                             </span>
                             <button
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -70,7 +95,7 @@ export default async function Products() {
                             //     })
                             //   }
                             >
-                            Add to cart
+                            View Product
                             </button>
                         </div>
                         </div>
@@ -88,3 +113,4 @@ export default async function Products() {
     </div>
   );
 }
+export default Products;

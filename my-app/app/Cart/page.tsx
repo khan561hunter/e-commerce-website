@@ -1,95 +1,59 @@
 "use client";
-import { useState, useEffect } from "react";
+import React from "react";
+import { remove } from "../redux/cartslice";
+import { useDispatch , useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 import Image from "next/image";
-import Link from "next/link";
 
-// CartPage component to show products added to cart
-export default function Cart() {
-  // Simulate cart data (usually stored in local storage or context)
-  const [cart, setCart] = useState<any[]>([]);
 
-  // Fetch cart data from localStorage (if using localStorage)
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCart(storedCart);
-  }, []);
 
-  // Remove item from cart
-  const removeFromCart = (id: number) => {
-    const updatedCart = cart.filter(item => item.id !== id);
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
+interface Products{
+  id:number;
+  title:string;
+  price:number;
+  image:string;
+}
 
-  // Update the quantity of an item in the cart
-  const updateQuantity = (id: number, action: "increase" | "decrease") => {
-    const updatedCart = cart.map(item => {
-      if (item.id === id) {
-        if (action === "increase") item.quantity += 1;
-        if (action === "decrease" && item.quantity > 1) item.quantity -= 1;
-      }
-      return item;
-    });
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
+const CartPage:React.FC = () =>{
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state:RootState) => state.cart);
 
-  return (
-    <div className="p-12">
-      <h1 className="text-3xl font-semibold">Your Cart</h1>
-      <div className="grid gap-5 md:grid-cols-3 mt-8">
-        {cart.length === 0 ? (
-          <p>Your cart is empty.</p>
-        ) : (
-          cart.map((item) => (
-            <div key={item.id} className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow">
-              <div className="flex items-center">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={100}
-                  height={100}
-                  className="rounded-md"
-                />
-                <div className="ml-4">
-                  <h2 className="text-lg font-semibold">{item.title}</h2>
-                  <p className="text-gray-600">${item.price}</p>
-                  <div className="flex items-center mt-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, "decrease")}
-                      className="px-3 py-1 text-white bg-gray-600 rounded-md"
-                    >
-                      -
-                    </button>
-                    <span className="mx-2">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, "increase")}
-                      className="px-3 py-1 text-white bg-gray-600 rounded-md"
-                    >
-                      +
-                    </button>
+  const handleRemove = (productId: number) => {
+    dispatch(remove(productId));
+  }
+  return(
+    <div className="min-h-screen bg-gray-200 py-8 px-4">
+      <div className="text-3xl font-bold text-center mb-8">
+        <div className="space-y-6">
+            {
+              cartItems.map((item:Products) => {
+                return(
+                  <div key={item.id} className="flex items-center bg-white shadow-md rounded-lg p-4">
+                    <Image src={item.image} alt={item.title} width={200} height={200} className="rounded-md"/>
+                    <div className="ml-4 flex-grow">
+                    <h1 className="text-lg font-bold text-gray-800">{item.title}</h1>
+
+                    <h5 className="text-lg font-medium text-gray-600 mt-2">${item.price}</h5>
                   </div>
-                </div>
-              </div>
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="text-white bg-red-500 rounded-md px-4 py-2"
-                >
-                  Remove
-                </button>
-                <span className="text-xl font-bold">${item.price * item.quantity}</span>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-      <div className="mt-8 flex justify-between">
-        <span className="text-xl font-semibold">Total: ${cart.reduce((total, item) => total + item.price * item.quantity, 0)}</span>
-        <Link href="/checkout">
-          <button className="text-white bg-blue-500 rounded-md px-6 py-3">Proceed to Checkout</button>
-        </Link>
+                  <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" onClick={() => handleRemove(item.id)}>
+                    Remove
+                  </button>
+
+                  </div>
+                  
+                  
+
+                )
+                
+
+              })
+            }
+        </div>
+
       </div>
     </div>
-  );
+
+  )
 }
+
+export default CartPage;
